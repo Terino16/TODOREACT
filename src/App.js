@@ -1,46 +1,43 @@
 import { useState } from 'react';
 import './App.css';
-import Task from './Task'
+import {Routes } from 'react-router';
+import Navbar from './Navbar';
+import Home from './Home';
+import React from 'react';
+import {
+  BrowserRouter as Router,
+  Route,
+} from 'react-router-dom';
+import Page from './Page';
+import Don from './Don';
+import {createContext } from 'react';
+import { QueryClient,QueryClientProvider } from '@tanstack/react-query';
+import { Form } from './Form';
 
+
+export const AppContext=createContext();
 function App() {
-  const [todolist, settodolist] = useState([]);
-  const [newtask, setnewtask] = useState("");
-   
-  const handleaddtask=()=>{
-    const task={
-      id: todolist.length===0 ? 1 : todolist.length+1,
-      Taskname: newtask,
-      complete:false
-    }
-    settodolist(task.taskName !== "" ? [...todolist, task] : todolist);
-  }
+const [name, setname] = useState("");
+const client= new QueryClient();
+return(
+  <div className='App'>
+    <QueryClientProvider  client={client}>
+    <AppContext.Provider value={{name,setname}}>
+  <Router>
+    <Navbar/>
+    <Routes>
+      <Route path="/" element={<Home/>}/>
+      <Route path="/page" element={<Page/>}/>
+      <Route path="/don" element={<Don/>}/>
+      <Route path="/form" element={<Form/>}/>
+  </Routes>
+  </Router>
+  </AppContext.Provider>
+  </QueryClientProvider>
+  </div>
+  
 
-  const handeldelete=(id)=>{
-    settodolist(todolist.filter((task) => task.id !== id));
-  }
-
-  const handelcomplete=(id)=>{
-    settodolist(todolist.filter((task) => task.id !== id));
-  }
-
-  return (
-    <div className="App ">
-    <div className='flex items-center justify-center mt-10'>
-      <input className='border-2 border-rose-500 w-[50%] h-[3rem]'  value={newtask} onChange={(event)=>setnewtask(event.target.value)}/>
-      <button className='mx-2 p-3 bg-blue-300' onClick={handleaddtask}>ADD TASK</button>
-    </div>
-    <div>
-      {todolist.map((task)=>{
-        return(<Task 
-        id={task.id}
-        Taskname={task.Taskname}
-        handeldelete={handeldelete}
-        handelcomplete={handelcomplete}
-        />)
-      })}
-    </div>
-    </div>
-  );
+)
 }
 
 export default App;
